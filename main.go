@@ -7,20 +7,18 @@ import (
 )
 
 func main() {
-	data := map[string]interface{}{
-		"Name": "Musa",
-	}
 
-	person := lib.Person{}
-	person.Create(data)
-	person.Retrive(12)
-	person.Update(data)
-	person.Delete(12)
-
-	_, err := lib.NewSQLiteDatabase("test.db")
+	db, err := lib.NewSQLiteDatabase("test.db")
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
+	db.Migrate()
+
+	personMapper := lib.NewPersonMapper(db)
+	personMapper.Add(lib.Person{Name: "Musa", Age: 27})
+
+	person2 := personMapper.Get(1)
+	fmt.Println(person2)
 }

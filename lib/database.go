@@ -5,22 +5,15 @@ import (
 	"gorm.io/gorm"
 )
 
-// this has bride pattern with the table.go
-// this is the implementation hierarchy
-type DatabaseInterface interface {
-	GetDatabase() interface{}
-	GetDatabaseType() string
-}
-
 type SQLiteDatabase struct {
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 func NewSQLiteDatabase(dbPath string) (*SQLiteDatabase, error) {
 	var err error
 	lite := SQLiteDatabase{}
 
-	lite.db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	lite.DB, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 
 	if err != nil {
 		return nil, err
@@ -30,10 +23,7 @@ func NewSQLiteDatabase(dbPath string) (*SQLiteDatabase, error) {
 
 }
 
-func (sqlite *SQLiteDatabase) GetDatabase() interface{} {
-	return sqlite.db
-}
+func (lite *SQLiteDatabase) Migrate() {
+	lite.DB.AutoMigrate(&Person{})
 
-func (sqlite *SQLiteDatabase) GetDatabaseType() string {
-	return "sqlite"
 }

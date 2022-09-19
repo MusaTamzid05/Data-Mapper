@@ -1,43 +1,48 @@
 package lib
 
-import "fmt"
-
-// this has bride pattern with database.go
-// this is the implementation part of the pattern
-// this is the anbstruction hierarchy
-
-type Table interface {
-	Init(database DatabaseInterface)
-	Create(row map[string]interface{})
-	Retrive(id int)
-	Update(row map[string]interface{})
-	Delete(id int)
-}
+import (
+	"gorm.io/gorm"
+)
 
 type Person struct {
+	gorm.Model
 	Name string
 	Age  int
 }
 
-func (p *Person) Init(database DatabaseInterface) {
+type PersonMapper struct {
+	database *SQLiteDatabase
+}
+
+func NewPersonMapper(database *SQLiteDatabase) *PersonMapper {
+	mapper := PersonMapper{database: database}
+	return &mapper
 
 }
 
-func (p *Person) Create(row map[string]interface{}) {
-	fmt.Println("Creating a person")
-}
-
-func (p *Person) Retrive(id int) {
-	fmt.Println("Retriving a person")
+func (mapper *PersonMapper) Get(id uint) Person {
+	person := Person{}
+	mapper.database.DB.First(&person)
+	return person
 
 }
 
-func (p *Person) Update(row map[string]interface{}) {
-	fmt.Println("Update a person")
+func (mapper *PersonMapper) Add(person Person) error {
+	result := mapper.database.DB.Create(&person)
+	return result.Error
 
 }
 
-func (p *Person) Delete(id int) {
-	fmt.Println("Delete a person")
+func (mapper *PersonMapper) Update(person Person) {
+
+}
+
+func (mapper *PersonMapper) Delete(id uint) {
+
+}
+
+func (mapper *PersonMapper) GetAll(id uint) []Person {
+	persons := []Person{}
+	return persons
 
 }
